@@ -1,11 +1,11 @@
 import { VC } from './vc';
 
-export function compareFace(photo: string, vc: VC): boolean {
+export function authenticateReceiverFace(photo: string): boolean {
     return true;
   }
   
-  export function compareFaceFromVC(vc1: VC, vc2: VC): boolean {
+  export function authenticateSenderFace(photo: string): boolean {
     return true;
   }
   
-  export default { compareFace, compareFaceFromVC };
+  export default { authenticateReceiverFace, authenticateSenderFace };
