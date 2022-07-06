@@ -1,0 +1,18 @@
+import React from 'react'
+import { TakePhoto } from './FaceAuthentication'
+
+const pic:string = 'data';
+const AppInitialization: React.FC<TakePhotoProps> = (photo) => {
+  const pic:string = photo.data;
+  return <TakePhoto data={pic} onValidationSuccess ={() => console.log('=========================>successful')} />
+};
+
+export default function App() {
+  return (
+      <AppInitialization data={pic} />
+  );
+}
+
+interface TakePhotoProps {
+  data:string;
+};
