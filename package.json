@@ -1,13 +1,17 @@
 {
   "name": "mosip-mobileid-sdk",
-  "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "version": "1.0.3",
+  "main": "lib\\commonjs\\index",
+  "module": "lib\\module\\index",
+  "react-native": "src\\index",
+  "types": "lib\\typescript\\src\\index.d.ts",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "prepare": "bob build"
   },
   "dependencies": {
     "@react-native-community/bob": "^0.17.1",
@@ -22,9 +26,48 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@react-native-community/bob": "^0.17.1",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.66.13",
     "typescript": "~4.3.5"
   },
-  "private": true
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "@react-native-community/bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "description": "mosip mobileid sdk",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosip/mosip-mobileid-sdk.git"
+  },
+  "keywords": [
+    "mosip",
+    "mobileid",
+    "sdk",
+    "monobikash"
+  ],
+  "author": "Monobikash Das",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mosip/mosip-mobileid-sdk/issues"
+  },
+  "homepage": "https://github.com/mosip/mosip-mobileid-sdk#readme"
 }
