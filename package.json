@@ -1,9 +1,9 @@
 {
   "name": "mosip-mobileid-sdk",
-  "version": "1.0.3",
-  "main": "lib\\commonjs\\index",
-  "module": "lib\\module\\index",
-  "react-native": "src\\index",
+  "version": "1.0.4",
+  "main": "lib\\commonjs\\index.js",
+  "module": "lib\\module\\index.js",
+  "react-native": "src\\index.tsx",
   "types": "lib\\typescript\\src\\index.d.ts",
   "scripts": {
     "start": "expo start",
