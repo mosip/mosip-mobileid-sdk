@@ -1,11 +1,11 @@
 import {StatusBar} from 'expo-status-bar'
-import React, { useEffect, useState } from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, Image} from 'react-native'
+import React, { Props, useEffect, useState } from 'react';
+import {StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, Image, Route} from 'react-native'
 import {Camera, CameraCapturedPicture, CameraType} from 'expo-camera'
 import authenticateFace from "./AuthenticationService"
 import * as FaceDetector from 'expo-face-detector';
 
-export const FaceAuthentication: React.FC<TakePhotoProps> = (props) => {
+export default function FaceAuth<T extends Route>(props: TakePhotoProps) {
     let camera: Camera;
   const [authentication, setAuthentication] = useState<boolean|null>(null)
   const [previewVisible, setPreviewVisible] = useState(false)
@@ -47,8 +47,9 @@ export const FaceAuthentication: React.FC<TakePhotoProps> = (props) => {
 
   const CameraPreview = ({photo, retakePicture}: any) => {
     return (
+        
       <View style={{backgroundColor: 'transparent', flex: 1, width: '100%', height: '100%'}}>
-        <ImageBackground source={{uri: photo && photo.uri}} style={{flex: 1}}>
+        <ImageBackground source={{uri: photo.uri}} style={{flex: 1}}>
           <View style={styles.imgBackground}>
             <View style={{flexDirection: 'column'}}>
               {authentication === true ? 
