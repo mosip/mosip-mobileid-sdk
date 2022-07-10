@@ -1,6 +1,6 @@
 {
   "name": "mosip-mobileid-sdk",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "lib\\commonjs\\index.js",
   "react-native": "src\\index.tsx",
   "module": "lib\\module\\index.js",

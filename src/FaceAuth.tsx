@@ -1,58 +1,71 @@
-import {StatusBar} from 'expo-status-bar'
 import React, { Props, useEffect, useState } from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, Image, Route} from 'react-native'
 import {Camera, CameraCapturedPicture, CameraType} from 'expo-camera'
 import authenticateFace from "./AuthenticationService"
 import * as FaceDetector from 'expo-face-detector';
 
-export default function FaceAuth<T extends Route>(props: TakePhotoProps) {
-    let camera: Camera;
-  const [authentication, setAuthentication] = useState<boolean|null>(null)
-  const [previewVisible, setPreviewVisible] = useState(false)
-  const [capturedImage, setCapturedImage] = useState<CameraCapturedPicture|null>(null)
-  const [cameraType, setCameraType] = useState(CameraType.front)
-  
-  useEffect(() => {
-    if (authentication) {
-      props.onValidationSuccess();
-    }
-  }, [authentication]);
+let camera:Camera;
 
-  useEffect(() => {
-    if (previewVisible) {
-        setCapturedImage(capturedImage);
-        setPreviewVisible(true);
-    }
-  }, [previewVisible]);
+export interface FaceAuthProps {
+  data:string;
+  onValidationSuccess: () => void;
+};
 
-  const __retakePicture = () => {
-    setCapturedImage(null)
-    setPreviewVisible(false)
+type State = {
+  authentication: boolean;
+  previewVisible: boolean;
+  capturedImage: CameraCapturedPicture|null;
+  cameraType: CameraType;
+
+};
+
+export default class FaceAuth extends React.Component<FaceAuthProps, State> {
+
+
+  constructor(props: FaceAuthProps) {
+    super(props);
+
+    if (props.data === null) {
+      throw new Error('Please send VC face image');
+    }
+
+    this.state = {
+      authentication: false,
+      previewVisible: false,
+      capturedImage: null,
+      cameraType: CameraType.front
+    };
+  }
+
+  __retakePicture = () => {
+    this.setState({
+      capturedImage: null,
+      previewVisible: false
+    });
+    
   }
   
-  const __switchCamera = () => {
-    setCameraType(cameraType === 'back' ? CameraType.front : CameraType.back)
+  __switchCamera = () => {
+    this.setState({cameraType: (this.state.cameraType === 'back' ? CameraType.front : CameraType.back)});
   }
 
-  const authenticatePhoto = async () => {
-    const photo:CameraCapturedPicture = await camera.takePictureAsync()
-    setCapturedImage(photo)
-    setPreviewVisible(true)
+  authenticatePhoto = async () => {
+    const photo:CameraCapturedPicture = await camera.takePictureAsync();
+    this.setState({capturedImage: photo, previewVisible: true});
 
-    const result:boolean = authenticateFace(capturedImage, props.data);
-    setAuthentication(result);
-
+    const result:boolean = authenticateFace(this.state.capturedImage, this.props.data);
+    this.setState({authentication: result});
     console.log('result ----- ' + result);
   }
 
-  const CameraPreview = ({photo, retakePicture}: any) => {
+  CameraPreview = ({photo, retakePicture}: any) => {
     return (
         
       <View style={{backgroundColor: 'transparent', flex: 1, width: '100%', height: '100%'}}>
         <ImageBackground source={{uri: photo.uri}} style={{flex: 1}}>
           <View style={styles.imgBackground}>
             <View style={{flexDirection: 'column'}}>
-              {authentication === true ? 
+              {this.state.authentication === true ? 
                     (<Text style={{borderRadius: 4, backgroundColor: '#fff',
                     flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 40, color: 'green',fontSize: 20, alignContent: 'center'}}>Authentication Successful</Text>) : 
                     (<TouchableOpacity onPress={retakePicture} style={{borderRadius: 4, backgroundColor: '#14274e',
@@ -66,42 +79,36 @@ export default function FaceAuth<T extends Route>(props: TakePhotoProps) {
     )
   }
 
-  return (
-    <View style={styles.container}>
+  render() {
+    return (
+      <View style={styles.container}>
       <View style={{flex: 1,width: '100%'}}>
-          {previewVisible ? (
-            <CameraPreview photo={capturedImage} retakePicture={__retakePicture} />
+          {this.state.previewVisible ? (
+            <this.CameraPreview photo={this.state.capturedImage} retakePicture={this.__retakePicture} />
           ) : (
-            <Camera type={cameraType} style={{flex: 1}} ref={(r:Camera) => { camera = r }}
+            <Camera type={this.state.cameraType} style={{flex: 1}} ref={(r:Camera) => { camera = r }}
             faceDetectorSettings={{mode: FaceDetector.FaceDetectorMode.fast, detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
               runClassifications: FaceDetector.FaceDetectorClassifications.all, minDetectionInterval: 100, tracking: true}}>
               <View style={{flex: 1, width: '100%', backgroundColor: 'transparent', flexDirection: 'row'}}>
                 <View style={{position: 'absolute', bottom: 30, flex: 1, right: '5%',  flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <TouchableOpacity onPress={__switchCamera}>
+                  <TouchableOpacity onPress={this.__switchCamera}>
                     <Text style={{backgroundColor: '#14274e',
                     alignItems: 'center',fontSize: 20,color: '#fff', fontWeight:'bold'}}>Switch Camera</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={{position: 'absolute', bottom: 0,flexDirection: 'row',flex: 1,width: '100%',padding: 20,justifyContent: 'space-between'}}>
                   <View style={{alignSelf: 'center', flex: 1,alignItems: 'center'}}>
-                    <TouchableOpacity onPress={authenticatePhoto} style={{width: 70,height: 70,bottom: 0,borderRadius: 50, backgroundColor: '#fff'}}/>
+                    <TouchableOpacity onPress={this.authenticatePhoto} style={{width: 70,height: 70,bottom: 0,borderRadius: 50, backgroundColor: '#fff'}}/>
                   </View>
                 </View>
               </View>
             </Camera>
           )}
         </View>
-      <StatusBar style="auto" />
     </View>
-  )
+    )
 }
-
-
-
-export interface TakePhotoProps {
-    data:string;
-    onValidationSuccess: () => void;
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -114,3 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,flexDirection: 'column',padding: 15,justifyContent: 'flex-end'
   }
 })
+
+function render() {
+    throw new Error('Function not implemented.');
+}
