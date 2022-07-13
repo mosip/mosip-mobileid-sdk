@@ -1,6 +1,6 @@
 {
   "name": "mosip-mobileid-sdk",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "lib\\commonjs\\index.js",
   "react-native": "src\\index.tsx",
   "module": "lib\\module\\index.js",
@@ -57,14 +57,11 @@
     "node_modules/",
     "lib/"
   ],
-  "description": "mosip mobileid sdk",
+  "description": "mosip face matching sdk for inji",
   "directories": {
     "lib": "lib"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mosip/mosip-mobileid-sdk.git"
-  },
+  "repository": "git+https://github.com/mosip/mosip-mobileid-sdk.git",
   "keywords": [
     "mosip",
     "mobileid",

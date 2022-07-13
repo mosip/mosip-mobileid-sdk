@@ -55,7 +55,9 @@ export default class FaceAuth extends React.Component<FaceAuthProps, State> {
 
     const result:boolean = authenticateFace(this.state.capturedImage, this.props.data);
     this.setState({authentication: result});
-    console.log('result ----- ' + result);
+    if (result) {
+      this.props.onValidationSuccess();
+    }
   }
 
   CameraPreview = ({photo, retakePicture}: any) => {
