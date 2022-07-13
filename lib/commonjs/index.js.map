@@ -1,0 +1,1 @@
+{"version":3,"names":[],"sources":["index.tsx"],"sourcesContent":["export { default as  FaceAuth } from './FaceAuth';\r\nexport type { FaceAuthProps as FaceAuthProps } from './FaceAuth';"],"mappings":";;;;;;;;;;;;AAAA"}
