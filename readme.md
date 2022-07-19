@@ -23,7 +23,7 @@ yarn add mosip-mobileid-sdk
 
 ### Latest stable version
 ```
-"1.0.8"
+"1.0.9"
 ```
 
 ### API SPEC
@@ -35,9 +35,8 @@ The sdk will be used by INJI app for biometric authentication
 {% endhint %}
 
 ### Parameters
-Common parameters used for all ABIS operations:
 Name | Description | Type
------|-------------|--------------|------
+-----|-------------|--------------
 capturedImage | The image that is captured by the sdk camera | string
 vcImage | The vercred image that is passed to the sdk as input for authentication | string
 
