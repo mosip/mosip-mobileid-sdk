@@ -27,18 +27,14 @@ yarn add mosip-mobileid-sdk
 ```
 
 ### API SPEC
-An SDK system that integrates with MOSIP should support the following operations. 
+The sdk will be used by INJI app for biometric authentication. An SDK system that integrates with MOSIP should support the following operations. 
 * [Face Matching](#FaceMatching)
-
-{% hint style="info" %}
-The sdk will be used by INJI app for biometric authentication
-{% endhint %}
 
 ### Parameters
 Name | Description | Type
 -----|-------------|--------------
 capturedImage | The image that is captured by the sdk camera | string
-vcImage | The vercred image that is passed to the sdk as input for authentication | string
+vcImage | The image present inside credential that is passed to the sdk as input for authentication | string
 
 ### Standard Return Codes(match or no match)
 response | Status
