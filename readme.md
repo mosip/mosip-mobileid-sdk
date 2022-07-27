@@ -23,7 +23,7 @@ yarn add mosip-mobileid-sdk
 
 ### Latest stable version
 ```
-"1.0.9"
+"1.0.10"
 ```
 
 ### API SPEC
