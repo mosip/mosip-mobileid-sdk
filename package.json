@@ -1,6 +1,6 @@
 {
-  "name": "mosip-mobileid-sdk-test",
-  "version": "0.0.7",
+  "name": "mosip-mobileid-sdk",
+  "version": "1.0.10",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",

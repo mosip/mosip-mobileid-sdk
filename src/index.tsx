@@ -12,7 +12,7 @@ import authenticateFace from "./AuthenticationService";
 
 let camera: Camera;
 
-export const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
+const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
   const [authentication, setAuthentication] = React.useState<boolean | null>(
     null
   );
@@ -44,7 +44,7 @@ export const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
     setAuthentication(result);
   };
 
-  const CameraPreview = ({ photo, retakePicture, authenticatePhoto }: any) => {
+  const CameraPreview = ({ photo, retakePicture }: any) => {
     return (
       <View
         style={{
@@ -199,3 +199,5 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
 });
+
+export default FaceAuth;
