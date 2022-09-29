@@ -7,19 +7,18 @@ import {
   ImageBackground,
 } from "react-native";
 import { Camera, CameraCapturedPicture } from "expo-camera";
-import { CameraType } from "expo-camera/build/Camera.types";
 import authenticateFace from "./AuthenticationService";
 
 let camera: Camera;
 
-const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
+export const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
   const [authentication, setAuthentication] = React.useState<boolean | null>(
     null
   );
   const [previewVisible, setPreviewVisible] = React.useState(false);
   const [capturedImage, setCapturedImage] =
     React.useState<CameraCapturedPicture | null>(null);
-  const [cameraType, setCameraType] = React.useState(CameraType.front);
+  const [cameraType, setCameraType] = React.useState(Camera.Constants.Type.front);
 
   useEffect(() => {
     if (authentication) {
@@ -33,7 +32,7 @@ const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
   };
 
   const switchCamera = () => {
-    setCameraType(cameraType === "back" ? CameraType.front : CameraType.back);
+    setCameraType(cameraType === "back" ? Camera.Constants.Type.front : Camera.Constants.Type.back);
   };
 
   const authenticatePhoto = async () => {
@@ -199,5 +198,3 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
 });
-
-export default FaceAuth;

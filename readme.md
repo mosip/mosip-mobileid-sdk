@@ -1,52 +1,29 @@
-## Mosip Mobileid sdk
-- This is a react native component library created to perform authentication in inji app.  
-- The library uses FaceAuthProps which takes data as input and provides onValidationSuccess() function which can be called after validation is successful.  
-- It opens camera and captures face image. It compares face image with the input data and on successful match it triggers onValidationSuccess() function.
-- To find match it uses AuthenticationService.ts file. (The matching function is mocked right now) 
-```
-export interface FaceAuthProps {
-  data:string;
-  onValidationSuccess: () => void;
-};
-```
-- Refer to the example folder to check usage of the library.
+# mosip-mobileid-sdk
+inji face sdk
+## Installation
 
-## USAGE
-- Using npm -
-```
+```sh
 npm install mosip-mobileid-sdk
 ```
-- Using yarn -
-```
-yarn add mosip-mobileid-sdk
+
+## Usage
+
+```js
+import { MosipMobileidSdkView } from "mosip-mobileid-sdk";
+
+// ...
+
+<MosipMobileidSdkView color="tomato" />
 ```
 
-### Latest stable version
-```
-"1.0.10"
-```
+## Contributing
 
-### API SPEC
-The sdk will be used by INJI app for biometric authentication. An SDK system that integrates with MOSIP should support the following operations. 
-* [Face Matching](#FaceMatching)
+See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
-### Parameters
-Name | Description | Type
------|-------------|--------------
-capturedImage | The image that is captured by the sdk camera | string
-vcImage | The image present inside credential that is passed to the sdk as input for authentication | string
+## License
 
-### Standard Return Codes(match or no match)
-response | Status
------|---------
-true | Success
-false | Failed
+MIT
 
-### FaceMatching
-Signature 
-```
-function authenticateFace(capturedImage: CameraCapturedPicture|null, vcImage:string): boolean {
-    // face matching algorithm logic here
-    return boolean;
-}
-```
+---
+
+Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

@@ -1,4 +1,5 @@
-import type { CameraCapturedPicture } from "expo-camera/build/Camera.types";
+import type { CameraCapturedPicture } from "expo-camera";
+import FaceAuthModule from "./FaceAuthModule";
 
 export default function authenticateFace(
   capturedImage: CameraCapturedPicture | null,
@@ -6,5 +7,6 @@ export default function authenticateFace(
 ): boolean {
   console.log(capturedImage);
   console.log(vcImage);
-  return true;
+  const result: boolean = FaceAuthModule.performMatch(capturedImage ? capturedImage.uri : "", vcImage);
+  return result;
 }
