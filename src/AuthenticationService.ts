@@ -1,10 +1,8 @@
-import type { CameraCapturedPicture } from "expo-camera/build/Camera.types";
 
 export default function authenticateFace(
-  capturedImage: CameraCapturedPicture | null,
+  capturedImage: string,
   vcImage: string
 ): boolean {
-  console.log(capturedImage);
-  console.log(vcImage);
+  // integrate face matching logic here
   return true;
 }

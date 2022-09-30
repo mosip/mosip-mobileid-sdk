@@ -45,7 +45,7 @@ false | Failed
 ### FaceMatching
 Signature 
 ```
-function authenticateFace(capturedImage: CameraCapturedPicture|null, vcImage:string): boolean {
+function authenticateFace(capturedImage: string, vcImage:string): boolean {
     // face matching algorithm logic here
     return boolean;
 }

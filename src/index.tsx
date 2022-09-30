@@ -37,11 +37,13 @@ const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
   };
 
   const authenticatePhoto = async () => {
-    const photo: CameraCapturedPicture = await camera.takePictureAsync();
-    setPreviewVisible(true);
-    setCapturedImage(photo);
-    const result: boolean = authenticateFace(capturedImage, props.data);
-    setAuthentication(result);
+    camera.takePictureAsync().then(photo => {
+      setPreviewVisible(true);
+      setCapturedImage(photo);
+      const result: boolean = authenticateFace(photo.base64 ? photo.base64 : "", props.data);
+      setAuthentication(result);
+    });
+    
   };
 
   const CameraPreview = ({ photo, retakePicture }: any) => {
