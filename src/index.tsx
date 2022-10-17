@@ -15,6 +15,6 @@ const MosipInjiFaceSdk = NativeModules.MosipInjiFaceSdk  ? NativeModules.MosipIn
       }
     );
 
-    export function faceAuth(capturedImage: string, vcImage: string): Promise<boolean> {
-      return MosipInjiFaceSdk.faceAuth(capturedImage, vcImage);
+    export function faceAuth(capturedImageUrl: string, vcImageUrl: string): Promise<boolean> {
+      return MosipInjiFaceSdk.faceAuth(capturedImageUrl, vcImageUrl);
     }
