@@ -1,7 +1,7 @@
 {
   "name": "mosip-inji-face-sdk",
-  "version": "0.1.0-test",
-  "description": "Inji face sdk",
+  "version": "0.1.0",
+  "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -147,8 +147,5 @@
         }
       ]
     ]
-  },
-  "dependencies": {
-    "expo-camera": "^12.3.0"
   }
 }

@@ -55,7 +55,7 @@ export default function App() {
     console.log('perform auth is called, waiting for result');
     console.log('=====> start time : ' + date);
     
-    await faceAuth('/storage/emulated/0/Download/Janardhan_004.jpg', '/storage/emulated/0/Download/Janardhan_005.jpg')
+    await faceAuth(capturedImage, vcImage)
       .then(setResult).catch(setResult);
     // await faceAuth('/sdcard/Download/Janardhan_004.jpg', '/sdcard/Download/Zuckerberg.jpg')
     // .then(setResult);

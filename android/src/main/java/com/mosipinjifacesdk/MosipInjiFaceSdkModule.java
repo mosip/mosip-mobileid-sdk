@@ -3,7 +3,6 @@ package com.mosipinjifacesdk;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 
@@ -30,7 +29,6 @@ import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
@@ -64,22 +62,20 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void faceAuth(String capturedImageUrl, String vcImageUrl, Promise promise) {
+  public void faceAuth(String capturedImage, String vcImage, Promise promise) {
 
-      Log.d(NAME, "Inside faceAuth...");
+    Log.d(NAME, "Inside faceAuth...");
 
-      Map<String, Bitmap> faceMap = new HashMap<>();
-      Uri capturedImagePath = Uri.fromFile(new File(capturedImageUrl));
-      Uri vcImagePath = Uri.fromFile(new File(vcImageUrl));
-      try {
-        detectFace("capturedImage", capturedImagePath, faceMap, promise);
-        detectFace("vcImage", vcImagePath, faceMap, promise);
-      } catch (Exception e) {
-        faceMap.clear();
-        Log.e(NAME, "Exception occured - ", e);
-        promise.reject(e);
-      }
+    Map<String, Bitmap> faceMap = new HashMap<>();
+    try {
+      detectFace("capturedImage", capturedImage, faceMap, promise);
+      detectFace("vcImage", vcImage, faceMap, promise);
+    } catch (Exception e) {
+      faceMap.clear();
+      Log.e(NAME, "Exception occured - ", e);
+      promise.reject(e);
     }
+  }
 
   private Interpreter getInterpreter() throws IOException {
     Log.d(NAME, "loding model start");
@@ -89,10 +85,14 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
     return interpreter;
   }
 
-  private synchronized void detectFace(String name, Uri imagePath, Map<String, Bitmap> faceMap,
+  private synchronized void detectFace(String name, String image, Map<String, Bitmap> faceMap,
                                       Promise promise) throws IOException {
     Log.d(NAME, "Inside detext face");
-    InputImage inputImage = InputImage.fromFilePath(getReactApplicationContext(), imagePath);
+    byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
+    InputStream inputStream = new ByteArrayInputStream(decodedString);
+    Bitmap bmp = BitmapFactory.decodeStream(inputStream);
+    Log.d(NAME, "bmp : " + bmp);
+    InputImage inputImage = InputImage.fromBitmap(bmp, 0);
     Task<List<Face>> task = faceDetector.process(inputImage);
     task.addOnSuccessListener(new OnSuccessListener<List<Face>>() {
       @Override

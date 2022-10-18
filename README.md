@@ -3,8 +3,8 @@
 - The library takes 2 images as base64 encoded string and returns boolean match or no match 
 - This library supports only *ANDROID* currently. *IOS* is not supported.
 ```
-export function faceAuth(capturedImageUrl: string, vcImageUrl: string): Promise<boolean | string> {
-  return IoMosipInjiFaceSdk.faceAuth(capturedImageUrl, vcImageUrl);
+export function faceAuth(capturedImage: string, vcImage: string): Promise<boolean | string> {
+  return IoMosipInjiFaceSdk.faceAuth(capturedImage, vcImage);
 }
 ```
 
@@ -29,7 +29,7 @@ import { faceAuth } from "mosip-inji-face-sdk";
 
 ### Latest stable version
 ```
-"0.1.0-test"
+"0.0.1-test"
 ```
 
 ### API SPEC
@@ -39,8 +39,8 @@ The sdk will be used by INJI app for biometric authentication. An SDK system tha
 ### Parameters
 Name | Description | Type
 -----|-------------|--------------
-capturedImageUrl | The image that is captured by the camera | Image URI
-vcImageUrl | The face image received in VC | Image URI
+capturedImage | The image that is captured by the camera | base64 encoded string
+vcImage | The face image received in VC | base64 encoded string
 
 ### Standard Return Codes(match or no match)
 response | Status
@@ -52,8 +52,8 @@ error message | Error
 ### FaceMatching
 Signature 
 ```
-export function faceAuth(capturedImageUrl: string, vcImageUrl: string): Promise<boolean | string> {
-// face mathcing logic here
-  return boolean;
+function authenticateFace(capturedImage: string, vcImage:string): boolean {
+    // face matching algorithm logic here
+    return boolean;
 }
 ```
