@@ -29,6 +29,7 @@ import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
@@ -79,19 +80,20 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
 
   private Interpreter getInterpreter() throws IOException {
     Log.d(NAME, "loding model start");
-    MappedByteBuffer modelFile = FileUtil.loadMappedFile(getReactApplicationContext(), "facenet.tflite");
-    Interpreter interpreter = new Interpreter(modelFile);
+    File file = new File(getReactApplicationContext().getCacheDir()+"/model.tflite");
+    Log.d(NAME, file.toString());
+    Interpreter interpreter = new Interpreter(file);
     Log.d(NAME, "loding model end");
     return interpreter;
   }
 
   private synchronized void detectFace(String name, String image, Map<String, Bitmap> faceMap,
                                       Promise promise) throws IOException {
-    Log.d(NAME, "Inside detext face");
+    Log.d(NAME, "Inside detext face" + name);
     byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
     InputStream inputStream = new ByteArrayInputStream(decodedString);
     Bitmap bmp = BitmapFactory.decodeStream(inputStream);
-    Log.d(NAME, "bmp : " + bmp);
+    Log.d(NAME, "bmp : " + bmp + " for name : " + name);
     InputImage inputImage = InputImage.fromBitmap(bmp, 0);
     Task<List<Face>> task = faceDetector.process(inputImage);
     task.addOnSuccessListener(new OnSuccessListener<List<Face>>() {
