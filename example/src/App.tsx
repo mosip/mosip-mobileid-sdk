@@ -1,4 +1,4 @@
-import { faceAuth } from 'mosip-inji-face-sdk';
+import { faceAuth, init, getFile } from 'mosip-inji-face-sdk';
 import * as React from 'react';
 import RNFS from 'react-native-fs';
 
@@ -38,19 +38,21 @@ export default function App() {
   let vcImage:string = '';
 
   // change the first image location here
-  RNFS.readFile('/storage/emulated/0/Download/Janardhan_004.jpg', "base64").then(data => {
-    capturedImage = data;
-    console.log('captured image loaded')
-  });
+   RNFS.readFile('/storage/emulated/0/Download/Janardhan_004.jpg', "base64").then(data => {
+     capturedImage = data;
+     console.log('captured image loaded' + capturedImage)
+   });
   // change the second image location here
-  RNFS.readFile('/storage/emulated/0/Download/Janardhan_005.jpg', "base64").then(data => {
-    vcImage = data;
-    console.log('vc image loaded')
-  });
+   RNFS.readFile('/storage/emulated/0/Download/Janardhan_005.jpg', "base64").then(data => {
+     vcImage = data;
+     console.log('vc image loaded' + vcImage)
+   });
+  //vcImage = vcImage.split(',')[1]?.toString;
   const [result, setResult] = React.useState<boolean|string>(false);
   console.log(result);
 
   const performAuth = async () => {
+    await init('https://drive.google.com/u/0/uc?id=19Zae-5v81JXhQQxZWy0-xiasUQyYa9AK&export=download', true);
     const date = new Date();
     console.log('perform auth is called, waiting for result');
     console.log('=====> start time : ' + date);
