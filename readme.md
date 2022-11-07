@@ -1,29 +1,35 @@
-## Mosip Mobileid sdk
-- This is a react native component library created to perform authentication in inji app.  
-- The library uses FaceAuthProps which takes data as input and provides onValidationSuccess() function which can be called after validation is successful.  
-- It opens camera and captures face image. It compares face image with the input data and on successful match it triggers onValidationSuccess() function.
-- To find match it uses AuthenticationService.ts file. (The matching function is mocked right now) 
+## Mosip inji face sdk
+- This is a react native component library created to perform face match in inji app.  
+- The library takes 2 images as base64 encoded string and returns boolean match or no match 
+- This library supports only *ANDROID* currently. *IOS* is not supported.
 ```
-export interface FaceAuthProps {
-  data:string;
-  onValidationSuccess: () => void;
-};
+export function faceAuth(capturedImage: string, vcImage: string): Promise<boolean | string> {
+  return IoMosipInjiFaceSdk.faceAuth(capturedImage, vcImage);
+}
 ```
-- Refer to the example folder to check usage of the library.
 
-## USAGE
+## INstallation
 - Using npm -
 ```
-npm install mosip-mobileid-sdk
+npm install mosip-inji-face-sdk
 ```
 - Using yarn -
 ```
-yarn add mosip-mobileid-sdk
+yarn add mosip-inji-face-sdk
 ```
+
+## Usage
+
+```js
+import { faceAuth } from "mosip-inji-face-sdk";
+
+## refer to /example/src/Auth.tsx for usage.
+```
+
 
 ### Latest stable version
 ```
-"1.0.10"
+"0.1.1"
 ```
 
 ### API SPEC
@@ -33,20 +39,12 @@ The sdk will be used by INJI app for biometric authentication. An SDK system tha
 ### Parameters
 Name | Description | Type
 -----|-------------|--------------
-capturedImage | The image that is captured by the sdk camera | string
-vcImage | The image present inside credential that is passed to the sdk as input for authentication | string
+capturedImage | The image that is captured by the camera | base64 encoded string
+vcImage | The face image received in VC | base64 encoded string
 
 ### Standard Return Codes(match or no match)
 response | Status
 -----|---------
-true | Success
-false | Failed
-
-### FaceMatching
-Signature 
-```
-function authenticateFace(capturedImage: string, vcImage:string): boolean {
-    // face matching algorithm logic here
-    return boolean;
-}
-```
+true | Matched
+false | Not Matched
+error message | Error

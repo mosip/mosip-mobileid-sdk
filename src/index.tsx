@@ -1,205 +1,36 @@
-import React, { useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ImageBackground,
-} from "react-native";
-import { Camera, CameraCapturedPicture } from "expo-camera";
-import { CameraType } from "expo-camera/build/Camera.types";
-import authenticateFace from "./AuthenticationService";
+import { NativeModules, Platform } from 'react-native';
+import RNFS from 'react-native-fs';
 
-let camera: Camera;
+const LINKING_ERROR =
+  `The package 'mosip-inji-face-sdk' doesn't seem to be linked. Make sure: \n\n` +
+  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+  '- You rebuilt the app after installing the package\n' +
+  '- You are not using Expo managed workflow\n';
 
-const FaceAuth: React.FC<FaceAuthProps> = (props: FaceAuthProps) => {
-  const [authentication, setAuthentication] = React.useState<boolean | null>(
-    null
-  );
-  const [previewVisible, setPreviewVisible] = React.useState(false);
-  const [capturedImage, setCapturedImage] =
-    React.useState<CameraCapturedPicture | null>(null);
-  const [cameraType, setCameraType] = React.useState(CameraType.front);
-
-  useEffect(() => {
-    if (authentication) {
-      props.onValidationSuccess();
-    }
-  }, [authentication]);
-
-  const retakePicture = () => {
-    setCapturedImage(null);
-    setPreviewVisible(false);
-  };
-
-  const switchCamera = () => {
-    setCameraType(cameraType === "back" ? CameraType.front : CameraType.back);
-  };
-
-  const authenticatePhoto = async () => {
-    camera.takePictureAsync().then(photo => {
-      setPreviewVisible(true);
-      setCapturedImage(photo);
-      const result: boolean = authenticateFace(photo.base64 ? photo.base64 : "", props.data);
-      setAuthentication(result);
-    });
-    
-  };
-
-  const CameraPreview = ({ photo, retakePicture }: any) => {
-    return (
-      <View
-        style={{
-          backgroundColor: "transparent",
-          flex: 1,
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <ImageBackground source={{ uri: photo.uri }} style={{ flex: 1 }}>
-          <View style={styles.imgBackground}>
-            <View style={{ flexDirection: "column" }}>
-              {authentication === true ? (
-                <Text
-                  style={{
-                    borderRadius: 4,
-                    backgroundColor: "#fff",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: 40,
-                    color: "green",
-                    fontSize: 20,
-                    alignContent: "center",
-                  }}
-                >
-                  Authentication Successful
-                </Text>
-              ) : (
-                <TouchableOpacity
-                  onPress={retakePicture}
-                  style={{
-                    borderRadius: 4,
-                    backgroundColor: "#14274e",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: 40,
-                  }}
-                >
-                  <Text style={{ color: "red", fontSize: 20 }}>
-                    Authentication failed, Try again
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        </ImageBackground>
-      </View>
+const MosipInjiFaceSdk = NativeModules.MosipInjiFaceSdk  ? NativeModules.MosipInjiFaceSdk  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
     );
-  };
 
-  return (
-    <View style={styles.container}>
-      <View style={{ flex: 1, width: "100%" }}>
-        {previewVisible && capturedImage ? (
-          <CameraPreview
-            photo={capturedImage}
-            authenticatePhoto={authenticatePhoto}
-            retakePicture={retakePicture}
-          />
-        ) : (
-          <Camera
-            type={cameraType}
-            style={{ flex: 1 }}
-            ref={(r: Camera) => {
-              camera = r;
-            }}
-          >
-            <View
-              style={{
-                flex: 1,
-                width: "100%",
-                backgroundColor: "transparent",
-                flexDirection: "row",
-              }}
-            >
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: 30,
-                  flex: 1,
-                  right: "5%",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TouchableOpacity onPress={switchCamera}>
-                  <Text
-                    style={{
-                      backgroundColor: "#14274e",
-                      alignItems: "center",
-                      fontSize: 20,
-                      color: "#fff",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Switch Camera
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  flexDirection: "row",
-                  flex: 1,
-                  width: "100%",
-                  padding: 20,
-                  justifyContent: "space-between",
-                }}
-              >
-                <View
-                  style={{ alignSelf: "center", flex: 1, alignItems: "center" }}
-                >
-                  <TouchableOpacity
-                    onPress={authenticatePhoto}
-                    style={{
-                      width: 70,
-                      height: 70,
-                      bottom: 0,
-                      borderRadius: 50,
-                      backgroundColor: "#fff",
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-          </Camera>
-        )}
-      </View>
-    </View>
-  );
-};
+    export function faceAuth(
+      capturedImage: string,
+      vcImage: string
+    ): Promise<boolean> {
+      return MosipInjiFaceSdk.faceAuth(capturedImage, vcImage);
+    }
 
-export interface FaceAuthProps {
-  data: string;
-  onValidationSuccess: () => void;
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imgBackground: {
-    flex: 1,
-    flexDirection: "column",
-    padding: 15,
-    justifyContent: "flex-end",
-  },
-});
-
-export default FaceAuth;
+    export async function init(url: string, overrideCache: boolean) {
+      if (overrideCache) {
+        console.log('inside init');
+        await RNFS.downloadFile({
+          fromUrl: url,
+          toFile: `${RNFS.CachesDirectoryPath}/model.tflite`,
+        }).promise.then((r) => console.log('Model loaded from url : ' + url));
+        // RNFS.readDir(`${RNFS.CachesDirectoryPath}`).then(consold7e  7777777777777777777777777777     .log).catch(console.log);
+      }
+    }
