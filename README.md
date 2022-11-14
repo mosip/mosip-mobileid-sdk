@@ -77,7 +77,7 @@ Name | Description | Type
 capturedImage | The image that is captured by the camera | base64 encoded string
 vcImage | The face image received in VC | base64 encoded string
 
-### Standard Return Codes(match or no match)
+#### Standard Return Codes(match or no match)
 response | Status
 -----|---------
 true | Matched
