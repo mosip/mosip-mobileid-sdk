@@ -34,6 +34,16 @@ import { faceAuth } from "mosip-inji-face-sdk";
 
 ### API SPEC
 The sdk will be used by INJI app for biometric authentication. An SDK system that integrates with MOSIP should support the following operations. 
+
+* [Init](#Init)
+
+### Parameters
+Name | Description | Type
+-----|-------------|--------------
+url | Secure url of the model | Secure url
+overrideCache | boolean indicator to override existing model | boolean
+
+
 * [Face Matching](#FaceMatching)
 
 ### Parameters
@@ -49,11 +59,23 @@ true | Matched
 false | Not Matched
 error message | Error
 
-### FaceMatching
-Signature 
+### Signature 
+
+#### 1. Init method
+
 ```
-function authenticateFace(capturedImage: string, vcImage:string): boolean {
-    // face matching algorithm logic here
-    return boolean;
+export async function init(url: string, overrideCache: boolean) {
+  // logic here
+}
+```
+
+#### 2. Face match
+
+```
+export function faceAuth(
+      capturedImage: string,
+      vcImage: string
+    ): Promise<boolean> {
+  // logic here
 }
 ```
