@@ -1,4 +1,4 @@
-import { faceAuth, init, getFile } from 'mosip-inji-face-sdk';
+import { faceAuth, init } from 'mosip-inji-face-sdk';
 import * as React from 'react';
 import RNFS from 'react-native-fs';
 
