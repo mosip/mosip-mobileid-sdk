@@ -28,7 +28,7 @@ export async function init(url: string, overrideCache: boolean) {
     await RNFS.downloadFile({
       fromUrl: url,
       toFile: fileDir,
-    }).promise.then(r => console.log('Model loaded from url : ' + url));
+    }).promise.then(() => console.log('Model loaded from url : ' + url));
     console.log('download completed.......................')
   }
 }
