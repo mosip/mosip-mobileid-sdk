@@ -74,7 +74,7 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
     } catch (Exception e) {
       faceMap.clear();
       Log.e(NAME, "Exception occured - ", e);
-      promise.reject(e);
+      promise.resolve(false);
     }
   }
 
@@ -115,7 +115,7 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
           } catch (IOException e) {
             faceMap.clear();
             Log.e(NAME, "Exception occurred - ", e);
-            promise.reject(e);
+            promise.resolve(false);
           }
         }
       }

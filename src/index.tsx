@@ -7,31 +7,28 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const MosipInjiFaceSdk = NativeModules.MosipInjiFaceSdk
-  ? NativeModules.MosipInjiFaceSdk
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+const MosipInjiFaceSdk = NativeModules.MosipInjiFaceSdk  ? NativeModules.MosipInjiFaceSdk  : new Proxy(
+  {},
+  {
+    get() {
+      throw new Error(LINKING_ERROR);
+    },
+  }
+);
 
-export function faceAuth(
-  capturedImage: string,
-  vcImage: string
-): Promise<boolean> {
+export function faceAuth(capturedImage: string, vcImage: string): Promise<boolean> {
   return MosipInjiFaceSdk.faceAuth(capturedImage, vcImage);
 }
 
 export async function init(url: string, overrideCache: boolean) {
-  if (overrideCache) {
-    console.log('inside init');
+  const fileDir = `${RNFS.CachesDirectoryPath}/model.tflite`;
+  const fileExists = RNFS.exists(fileDir);
+  if (!fileExists || overrideCache) {
+    console.log('inside init')
     await RNFS.downloadFile({
       fromUrl: url,
-      toFile: `${RNFS.CachesDirectoryPath}/model.tflite`,
-    }).promise.then(() => console.log('Model loaded from url : ' + url));
-    // RNFS.readDir(`${RNFS.CachesDirectoryPath}`).then(console.log).catch(console.log);
+      toFile: fileDir,
+    }).promise.then(r => console.log('Model loaded from url : ' + url));
+    console.log('download completed.......................')
   }
 }
