@@ -22,13 +22,12 @@ export function faceAuth(capturedImage: string, vcImage: string): Promise<boolea
 
 export async function init(url: string, overrideCache: boolean) {
   const fileDir = `${RNFS.CachesDirectoryPath}/model.tflite`;
-  const fileExists = RNFS.exists(fileDir);
+  const fileExists = await RNFS.exists(fileDir);
   if (!fileExists || overrideCache) {
-    console.log('inside init')
+    console.log('inside inji face sdk init function')
     await RNFS.downloadFile({
       fromUrl: url,
       toFile: fileDir,
     }).promise.then(() => console.log('Model loaded from url : ' + url));
-    console.log('download completed.......................')
   }
 }

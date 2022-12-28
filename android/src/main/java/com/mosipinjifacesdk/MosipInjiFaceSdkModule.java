@@ -31,6 +31,7 @@ import org.tensorflow.lite.support.image.ops.ResizeOp;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Exception;
 import java.io.InputStream;
 import java.nio.MappedByteBuffer;
 import java.util.HashMap;
@@ -112,7 +113,7 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
             Log.d(NAME, "Inside result calculator");
             Interpreter interpreter = getInterpreter();
             resultsCalculator(interpreter, faceMap, promise);
-          } catch (IOException e) {
+          } catch (Exception e) {
             faceMap.clear();
             Log.e(NAME, "Exception occurred - ", e);
             promise.resolve(false);

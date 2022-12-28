@@ -37,13 +37,15 @@ export default function App() {
   let capturedImage:string = '';
   let vcImage:string = '';
 
+  console.log(RNFS.DownloadDirectoryPath);
+
   // change the first image location here
-   RNFS.readFile('/storage/emulated/0/Download/mark.jpg', "base64").then(data => {
+   RNFS.readFile('/storage/emulated/0/Download/Janardhan_002.jpg', "base64").then(data => {
      capturedImage = data;
      // console.log('captured image loaded' + capturedImage)
    });
   // change the second image location here
-   RNFS.readFile('/storage/emulated/0/Download/Janardhan_005.jpg', "base64").then(data => {
+   RNFS.readFile('/storage/emulated/0/Download/Janardhan_004.jpg', "base64").then(data => {
      vcImage = data;
      // console.log('vc image loaded' + vcImage)
    });
