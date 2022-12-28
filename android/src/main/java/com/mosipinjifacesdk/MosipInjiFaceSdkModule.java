@@ -88,38 +88,48 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
   }
 
   private synchronized void detectFace(String name, String image, Map<String, Bitmap> faceMap,
-                                      Promise promise) throws IOException {
+                                      Promise promise) {
     Log.d(NAME, "Inside detext face" + name);
-    byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
-    InputStream inputStream = new ByteArrayInputStream(decodedString);
-    Bitmap bmp = BitmapFactory.decodeStream(inputStream);
-    Log.d(NAME, "bmp : " + bmp + " for name : " + name);
-    InputImage inputImage = InputImage.fromBitmap(bmp, 0);
-    Task<List<Face>> task = faceDetector.process(inputImage);
-    task.addOnSuccessListener(new OnSuccessListener<List<Face>>() {
-      @Override
-      public void onSuccess(List<Face> faces) {
-        Log.d(NAME, "no of face detected :: " + faces.size());
-        //crop image
-        Face face = faces.get(0);
-
-        Rect bounds = face.getBoundingBox();
-        Bitmap croppedImage = Bitmap.createBitmap(inputImage.getBitmapInternal(), bounds.left, bounds.top, bounds.width(), bounds.height());
-        faceMap.put(name, croppedImage);
-        Log.d(NAME, "faceMap size : " + faceMap.size());
-        if (faceMap.size() == 2) {
-          try {
-            Log.d(NAME, "Inside result calculator");
-            Interpreter interpreter = getInterpreter();
-            resultsCalculator(interpreter, faceMap, promise);
-          } catch (IOException e) {
-            faceMap.clear();
-            Log.e(NAME, "Exception occurred - ", e);
-            promise.resolve(false);
+      try {
+        byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
+        InputStream inputStream = new ByteArrayInputStream(decodedString);
+        Bitmap bmp = BitmapFactory.decodeStream(inputStream);
+        Log.d(NAME, "bmp : " + bmp + " for name : " + name);
+        InputImage inputImage = InputImage.fromBitmap(bmp, 0);
+        Task<List<Face>> task = faceDetector.process(inputImage);
+        task.addOnSuccessListener(new OnSuccessListener<List<Face>>() {
+          @Override
+          public void onSuccess(List<Face> faces) {
+            Log.d(NAME, "no of face detected :: " + faces.size());
+            if (faces.size() > 0) {
+              //crop image
+              Face face = faces.get(0);
+              Rect bounds = face.getBoundingBox();
+              Bitmap croppedImage = Bitmap.createBitmap(inputImage.getBitmapInternal(), bounds.left, bounds.top, bounds.width(), bounds.height());
+              faceMap.put(name, croppedImage);
+              Log.d(NAME, "faceMap size : " + faceMap.size());
+              if (faceMap.size() == 2) {
+                try {
+                  Log.d(NAME, "Inside result calculator");
+                  Interpreter interpreter = getInterpreter();
+                  resultsCalculator(interpreter, faceMap, promise);
+                } catch (Exception e) {
+                  faceMap.clear();
+                  Log.e(NAME, "Exception occurred - ", e);
+                  promise.resolve(false);
+                }
+              }
+            } else {
+              Log.e(NAME, "Exception occurred, no face found in one image");
+              promise.resolve(false);
+            }
           }
-        }
+        });
+      } catch (Exception e) {
+        faceMap.clear();
+        Log.e(NAME, "Exception occurred - ", e);
+        promise.resolve(false);
       }
-    });
   }
 
   private void resultsCalculator(Interpreter interpreter, Map<String, Bitmap> faceMap, Promise promise) throws IOException {

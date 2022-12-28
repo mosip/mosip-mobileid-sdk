@@ -37,13 +37,15 @@ export default function App() {
   let capturedImage:string = '';
   let vcImage:string = '';
 
+  console.log(RNFS.DownloadDirectoryPath);
+
   // change the first image location here
-   RNFS.readFile('/storage/emulated/0/Download/mark.jpg', "base64").then(data => {
+   RNFS.readFile('/storage/emulated/0/Download/Janardhan_002.jpg', "base64").then(data => {
      capturedImage = data;
      // console.log('captured image loaded' + capturedImage)
    });
   // change the second image location here
-   RNFS.readFile('/storage/emulated/0/Download/Janardhan_005.jpg', "base64").then(data => {
+   RNFS.readFile('/storage/emulated/0/Download/Janardhan_004.jpg', "base64").then(data => {
      vcImage = data;
      // console.log('vc image loaded' + vcImage)
    });
@@ -52,7 +54,7 @@ export default function App() {
   console.log(result);
 
   const performAuth = async () => {
-    await init('https://drive.google.com/u/0/uc?id=1Z8Puici9alcmH-oU-VoXlHXCagAe1ago&export=download', false);
+    await init('https://drive.google.com/u/0/uc?id=1Z8Puici9alcmH-oU-VoXlHXCagAe1ago&export=download', true);
     const date = new Date();
     console.log('perform auth is called, waiting for result');
     console.log('=====> start time : ' + date);
