@@ -81,7 +81,6 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
   private Interpreter getInterpreter() throws IOException {
     Log.d(NAME, "loding model start");
     File file = new File(getReactApplicationContext().getCacheDir()+"/model.tflite");
-    Log.d(NAME, file.toString());
     Interpreter interpreter = new Interpreter(file);
     Log.d(NAME, "loding model end");
     return interpreter;
@@ -94,7 +93,6 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
         byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
         InputStream inputStream = new ByteArrayInputStream(decodedString);
         Bitmap bmp = BitmapFactory.decodeStream(inputStream);
-        Log.d(NAME, "bmp : " + bmp + " for name : " + name);
         InputImage inputImage = InputImage.fromBitmap(bmp, 0);
         Task<List<Face>> task = faceDetector.process(inputImage);
         task.addOnSuccessListener(new OnSuccessListener<List<Face>>() {
