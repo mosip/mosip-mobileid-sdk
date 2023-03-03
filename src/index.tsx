@@ -25,7 +25,7 @@ export async function init(url: string, overrideCache: boolean): Promise<boolean
 
     const fileDir = `${RNFS.CachesDirectoryPath}/model.tflite`;
     var fileExists = await RNFS.exists(fileDir);
-    
+
     if (fileExists) {
       // compare checksum and verify if file downloaded successfully
       var checksum = await RNFS.readFile(`${RNFS.CachesDirectoryPath}/checksum.txt`);
@@ -36,7 +36,7 @@ export async function init(url: string, overrideCache: boolean): Promise<boolean
         fileExists = false;
       }
     }
-    
+
     if (!fileExists || overrideCache) {
       console.log('inside inji face sdk init function - ')
 
@@ -51,7 +51,7 @@ export async function init(url: string, overrideCache: boolean): Promise<boolean
         toFile: fileDir,
       }).promise;
       console.log('Model File download size = ' + downloadRes.bytesWritten)
-      
+
 
       var checksum = await RNFS.readFile(`${RNFS.CachesDirectoryPath}/checksum.txt`);
       var fileData = await RNFS.hash(fileDir, 'sha256');
