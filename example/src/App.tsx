@@ -40,7 +40,7 @@ export default function App() {
   console.log(RNFS.DownloadDirectoryPath);
 
   // change the first image location here
-   RNFS.readFile('/storage/emulated/0/Download/Janardhan_002.jpg', "base64").then(data => {
+   RNFS.readFile('/storage/emulated/0/Download/jana1.jpg', "base64").then(data => {
      capturedImage = data;
      // console.log('captured image loaded' + capturedImage)
    });
@@ -49,20 +49,21 @@ export default function App() {
      vcImage = data;
      // console.log('vc image loaded' + vcImage)
    });
-  //vcImage = vcImage.split(',')[1]?.toString;
+  // vcImage = vcImage.split(',')[1]?.toString;
   const [result, setResult] = React.useState<boolean|string>(false);
   console.log(result);
 
   const performAuth = async () => {
-    await init('https://drive.google.com/u/0/uc?id=1Z8Puici9alcmH-oU-VoXlHXCagAe1ago&export=download', true);
+    var initRes = await init('https://api.dev.mosip.net/inji', true);
+    console.log('init result is = ' + initRes)
     const date = new Date();
     console.log('perform auth is called, waiting for result');
     console.log('=====> start time : ' + date);
     
     await faceAuth(capturedImage, vcImage)
       .then(setResult).catch(setResult);
-    // await faceAuth('/sdcard/Download/Janardhan_004.jpg', '/sdcard/Download/Zuckerberg.jpg')
-    // .then(setResult);
+    await faceAuth(capturedImage, vcImage)
+    .then(setResult);
     
       console.log('after calling faceauth result is = '+result);
       const finalDate = new Date();
