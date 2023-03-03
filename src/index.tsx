@@ -22,24 +22,24 @@ export function faceAuth(capturedImage: string, vcImage: string): Promise<boolea
 
 export async function init(url: string, overrideCache: boolean): Promise<boolean> {
   try {
-
+    console.log('inside inji face sdk init function, url is - ' + url)
     const fileDir = `${RNFS.CachesDirectoryPath}/model.tflite`;
     var fileExists = await RNFS.exists(fileDir);
 
     if (fileExists) {
       // compare checksum and verify if file downloaded successfully
-      var checksum = await RNFS.readFile(`${RNFS.CachesDirectoryPath}/checksum.txt`);
-      var fileData = await RNFS.hash(fileDir, 'sha256');
-      console.log('file exists......so compare checksum')
-      console.log(checksum.trim != fileData.trim)
-      if (checksum.trim != fileData.trim) {
+      var checksum:string = await RNFS.readFile(`${RNFS.CachesDirectoryPath}/checksum.txt`);
+      checksum = checksum.replace(/\s/g, "");
+      var fileData:string = await RNFS.hash(fileDir, 'sha256');
+      console.log('file exists......so comparing checksum')
+      if (checksum !== fileData) {
         fileExists = false;
+      } else {
+        return Promise.resolve(true)
       }
     }
 
     if (!fileExists || overrideCache) {
-      console.log('inside inji face sdk init function - ')
-
       let txtDownloadRes: DownloadResult = await RNFS.downloadFile({
         fromUrl: url + '/model.txt',
         toFile: `${RNFS.CachesDirectoryPath}/checksum.txt`,
@@ -52,12 +52,12 @@ export async function init(url: string, overrideCache: boolean): Promise<boolean
       }).promise;
       console.log('Model File download size = ' + downloadRes.bytesWritten)
 
-
-      var checksum = await RNFS.readFile(`${RNFS.CachesDirectoryPath}/checksum.txt`);
+      var checksum = await RNFS.readFile(`${RNFS.CachesDirectoryPath}/checksum.txt`);  
+      checksum = checksum.replace(/\s/g, "");
       var fileData = await RNFS.hash(fileDir, 'sha256');
       console.log('checksum calculated from file = ' + fileData)
-      console.log('checksum received from server = ' + checksum)
-      if (fileData.trim == checksum.trim) {
+      console.log('checksum received from server = ' + checksum.replace(/\s/g, ""))
+      if (fileData === checksum) {
         return Promise.resolve(true)
       }
     }

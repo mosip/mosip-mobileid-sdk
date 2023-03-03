@@ -54,7 +54,7 @@ export default function App() {
   console.log(result);
 
   const performAuth = async () => {
-    var initRes = await init('https://api.dev.mosip.net/inji', true);
+    var initRes = await downloadModel();
     console.log('init result is = ' + initRes)
     const date = new Date();
     console.log('perform auth is called, waiting for result');
@@ -102,3 +102,29 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
+
+async function downloadModel(): Promise<boolean> {
+  var result:boolean = false;
+  try {
+    const maxRetry = 10;
+    const resp: string = 'https://api.dev.mosip.net/inji'
+    if (resp != null) {
+      result = await init(resp, false);
+      console.log('model download result is = ' + result)
+      if (!result) {
+        for (let counter = 0; counter < maxRetry; counter++) {
+          console.log('trying for - ' + counter)
+          result = await init(resp, false);
+          console.log('model redownload result is = ' + result)
+          if (result) {
+            break;
+          }
+        }
+      }
+      return Promise.resolve(result);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return Promise.resolve(result)
+}
