@@ -23,24 +23,24 @@ export function faceAuth(capturedImage: string, vcImage: string): Promise<boolea
 export async function init(url: string, overrideCache: boolean): Promise<boolean> {
   try {
     console.log('inside inji face sdk init function, url is - ' + url)
-    const modelDirPath = `${RNFS.CachesDirectoryPath}/model.tflite`;
-    const checksumCachePath = `${RNFS.CachesDirectoryPath}/model_sha256sum.txt`;
+    const modelFilePath = `${RNFS.CachesDirectoryPath}/model.tflite`;
+    const checksumCachePath = `${RNFS.CachesDirectoryPath}/model.sha256`;
 
-    var fileExists = await RNFS.exists(modelDirPath);
+    var fileExists = await RNFS.exists(modelFilePath);
 
     // checking if file is alredy present and downloaded properly
-    fileExists = await doesFileExists(fileExists, overrideCache, modelDirPath, checksumCachePath);
+    fileExists = await doesModelExist(fileExists, overrideCache, modelFilePath, checksumCachePath);
 
     if (!fileExists || overrideCache) {
-      let txtDownloadRes: DownloadResult = await downloadFile(url + '/model_sha256sum.txt', checksumCachePath)
+      let txtDownloadRes: DownloadResult = await downloadFile(url + '/model.sha256', checksumCachePath)
       console.log('Checksum file download status code = ' + txtDownloadRes.statusCode)
 
-      let downloadRes: DownloadResult = await downloadFile(url + '/model.tflite', modelDirPath)
+      let downloadRes: DownloadResult = await downloadFile(url + '/model.tflite', modelFilePath)
       console.log('Model File download size = ' + downloadRes.bytesWritten)
 
       var checksum = await RNFS.readFile(checksumCachePath);  
       checksum = checksum.replace(/\s/g, "");
-      var fileData = await RNFS.hash(modelDirPath, 'sha256');
+      var fileData = await RNFS.hash(modelFilePath, 'sha256');
       console.log('checksum calculated from file = ' + fileData)
       console.log('checksum received from server = ' + checksum.replace(/\s/g, ""))
       if (fileData === checksum) {
@@ -56,17 +56,22 @@ export async function init(url: string, overrideCache: boolean): Promise<boolean
   return Promise.resolve(false);
 }
 
-async function doesFileExists(fileExists:boolean, overrideCache:boolean, fileDir:string, checksumCachePath:string): Promise<boolean> {
+async function doesModelExist(fileExists:boolean, overrideCache:boolean, fileDir:string, checksumCachePath:string): Promise<boolean> {
   if (fileExists && !overrideCache) {
-    // compare checksum to verify if file downloaded successfully
-    var checksum:string = await RNFS.readFile(checksumCachePath);
-    checksum = checksum.replace(/\s/g, "");
-    var fileData:string = await RNFS.hash(fileDir, 'sha256');
-    console.log('file exists......so comparing checksum')
-    if (checksum !== fileData) {
-      fileExists = false;
-    } else {
-      fileExists = true;
+    try {
+      // compare checksum to verify if file downloaded successfully
+      var checksum:string = await RNFS.readFile(checksumCachePath);
+      checksum = checksum.replace(/\s/g, "");
+      var fileData:string = await RNFS.hash(fileDir, 'sha256');
+      console.log('file exists......so comparing checksum')
+      if (checksum !== fileData) {
+        fileExists = false;
+      } else {
+        fileExists = true;
+      }
+    } catch (e) {
+      console.error(e)
+      fileExists = false
     }
   }
   return fileExists
