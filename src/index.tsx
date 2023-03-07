@@ -32,18 +32,18 @@ export async function init(url: string, overrideCache: boolean): Promise<boolean
     fileExists = await doesModelExist(fileExists, overrideCache, modelFilePath, checksumCachePath);
 
     if (!fileExists || overrideCache) {
-      let txtDownloadRes: DownloadResult = await downloadFile(url + '/model.sha256', checksumCachePath)
-      console.log('Checksum file download status code = ' + txtDownloadRes.statusCode)
+      let checksumDownloadResult: DownloadResult = await downloadFile(url + '/model.sha256', checksumCachePath)
+      console.log('Checksum file download status code = ' + checksumDownloadResult.statusCode)
 
       let downloadRes: DownloadResult = await downloadFile(url + '/model.tflite', modelFilePath)
       console.log('Model File download size = ' + downloadRes.bytesWritten)
 
       var checksum = await RNFS.readFile(checksumCachePath);  
       checksum = checksum.replace(/\s/g, "");
-      var fileData = await RNFS.hash(modelFilePath, 'sha256');
-      console.log('checksum calculated from file = ' + fileData)
+      var actualModelChecksum = await RNFS.hash(modelFilePath, 'sha256');
+      console.log('checksum calculated from file = ' + actualModelChecksum)
       console.log('checksum received from server = ' + checksum.replace(/\s/g, ""))
-      if (fileData === checksum) {
+      if (actualModelChecksum === checksum) {
         return Promise.resolve(true)
       }
     } else if (fileExists) {
