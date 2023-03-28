@@ -1,4 +1,4 @@
-import { faceAuth, init } from 'mosip-inji-face-sdk';
+import { faceAuth, init } from 'mosip-mobileid-sdk';
 import * as React from 'react';
 
 import { Alert, Button, Image, Platform, StyleSheet, View } from 'react-native';
@@ -12,7 +12,7 @@ export default function App() {
     index: number
   ): Promise<{ path: string; data: string }> => {
     if (Platform.OS === 'ios') {
-      const path = `${RNFS.MainBundlePath}/images/img${index}.jpg`;
+      const path = `${RNFS.MainBundlePath}/assets/images/img${index}.jpg`;
       return {
         path: path,
         data: await RNFS.readFile(path, 'base64'),
@@ -35,10 +35,11 @@ export default function App() {
   };
 
   const compareImages = async () => {
-    var resp:boolean = await init('https://drive.google.com/u/0/uc?id=1Krd2U6DQsqhXpZn7QgDv-Hx4aAwP-QOa&export=download')
-    console.log('=================> received response')
-    console.log(resp)
-
+    var resp = await init(
+      'https://drive.google.com/u/0/uc?id=1Krd2U6DQsqhXpZn7QgDv-Hx4aAwP-QOa&export=download'
+    );
+    console.log('=================> received response');
+    console.log(resp);
 
     if (image1 === undefined || image2 === undefined) {
       return;

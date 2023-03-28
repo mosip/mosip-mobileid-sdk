@@ -1,5 +1,5 @@
 {
-  "name": "mosip-inji-face-sdk",
+  "name": "mosip-mobileid-sdk",
   "version": "0.1.0",
   "description": "test",
   "main": "lib/commonjs/index",

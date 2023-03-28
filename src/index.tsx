@@ -1,13 +1,13 @@
 import { NativeModules, Platform } from 'react-native';
 
 const LINKING_ERROR =
-  `The package 'mosip-inji-face-sdk' doesn't seem to be linked. Make sure: \n\n` +
+  `The package 'mosip-mobileid-sdk' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const BiometricSdkReactNative = NativeModules.BiometricSdkReactNative
-  ? NativeModules.BiometricSdkReactNative
+const MosipMobileidSdk = NativeModules.MosipMobileidSdk
+  ? NativeModules.MosipMobileidSdk
   : new Proxy(
       {},
       {
@@ -35,24 +35,18 @@ export async function init(url: string): Promise<boolean> {
     },
   };
   try {
-    await BiometricSdkReactNative.configure(config);
+    await MosipMobileidSdk.configure(config);
     return true;
   } catch (e) {
     console.error('init failed', e);
     return false;
   }
-  
 }
-
-function faceExtractAndEncode(image: string): Promise<string> {
-  return BiometricSdkReactNative.faceExtractAndEncode(image);
-}
-
 export async function faceAuth(capturedImage: string, vcImage: string): Promise<boolean> {
   try {
-    const template1 = await faceExtractAndEncode(capturedImage);
-    const template2 = await faceExtractAndEncode(vcImage);
-    return await BiometricSdkReactNative.faceCompare(template1, template2);
+    const template1 = await MosipMobileidSdk.faceExtractAndEncode(capturedImage);
+    const template2 = await MosipMobileidSdk.faceExtractAndEncode(vcImage);
+    return await MosipMobileidSdk.faceCompare(template1, template2);
   } catch (e) {
     console.error('faceAuth auth failed', e);
     return false;
