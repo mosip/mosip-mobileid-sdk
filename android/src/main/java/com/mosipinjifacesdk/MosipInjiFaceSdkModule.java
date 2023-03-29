@@ -39,30 +39,30 @@ import java.util.Map;
 
 @ReactModule(name = MosipInjiFaceSdkModule.NAME)
 public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
-    public static final String NAME = "MosipInjiFaceSdk";
+  public static final String NAME = "MosipInjiFaceSdk";
 
-    private FaceDetector faceDetector;
+  private FaceDetector faceDetector;
 
-    public MosipInjiFaceSdkModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        FaceDetectorOptions options =
-        new FaceDetectorOptions.Builder()
-            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-            .setContourMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
-            .build();
-        FaceDetector detector = FaceDetection.getClient(options);
-        faceDetector = detector;
-    }
+  public MosipInjiFaceSdkModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    FaceDetectorOptions options =
+      new FaceDetectorOptions.Builder()
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+        .setContourMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+        .build();
+    FaceDetector detector = FaceDetection.getClient(options);
+    faceDetector = detector;
+  }
 
-    @Override
-    @NonNull
-    public String getName() {
-        return NAME;
-    }
+  @Override
+  @NonNull
+  public String getName() {
+    return NAME;
+  }
 
 
-    @ReactMethod
+  @ReactMethod
   public void faceAuth(String capturedImage, String vcImage, Promise promise) {
 
     Log.d(NAME, "Inside faceAuth...");
@@ -87,47 +87,46 @@ public class MosipInjiFaceSdkModule extends ReactContextBaseJavaModule {
   }
 
   private synchronized void detectFace(String name, String image, Map<String, Bitmap> faceMap,
-                                      Promise promise) {
+                                       Promise promise) {
     Log.d(NAME, "Inside detext face" + name);
-      try {
-        byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
-        InputStream inputStream = new ByteArrayInputStream(decodedString);
-        Bitmap bmp = BitmapFactory.decodeStream(inputStream);
-        InputImage inputImage = InputImage.fromBitmap(bmp, 0);
-        Task<List<Face>> task = faceDetector.process(inputImage);
-        task.addOnSuccessListener(new OnSuccessListener<List<Face>>() {
-          @Override
-          public void onSuccess(List<Face> faces) {
-            Log.d(NAME, "no of face detected :: " + faces.size());
-            if (faces.size() > 0) {
-              //crop image
-              Face face = faces.get(0);
-              Rect bounds = face.getBoundingBox();
-              Bitmap croppedImage = Bitmap.createBitmap(inputImage.getBitmapInternal(), bounds.left, bounds.top, bounds.width(), bounds.height());
-              faceMap.put(name, croppedImage);
-              Log.d(NAME, "faceMap size : " + faceMap.size());
-              if (faceMap.size() == 2) {
-                try {
-                  Log.d(NAME, "Inside result calculator");
-                  Interpreter interpreter = getInterpreter();
-                  resultsCalculator(interpreter, faceMap, promise);
-                } catch (Exception e) {
-                  faceMap.clear();
-                  Log.e(NAME, "Exception occurred - ", e);
-                  promise.resolve(false);
-                }
-              }
-            } else {
-              Log.e(NAME, "Exception occurred, no face found in one image");
-              promise.resolve(false);
-            }
-          }
-        });
-      } catch (Exception e) {
-        faceMap.clear();
-        Log.e(NAME, "Exception occurred - ", e);
+    try {
+      byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
+      InputStream inputStream = new ByteArrayInputStream(decodedString);
+      Bitmap bmp = BitmapFactory.decodeStream(inputStream);
+      InputImage inputImage = InputImage.fromBitmap(bmp, 0);
+      Task<List<Face>> task = faceDetector.process(inputImage);
+      task.addOnSuccessListener((faces) -> faceDetectorSuccessListener(name, inputImage, faceMap, promise, faces));
+    } catch (Exception e) {
+      faceMap.clear();
+      Log.e(NAME, "Exception occurred - ", e);
+      promise.resolve(false);
+    }
+  }
+
+  public void faceDetectorSuccessListener(String name, InputImage inputImage, Map<String, Bitmap> faceMap, Promise promise, List<Face> faces) {
+    try {
+      Log.d(NAME, "no of face detected :: " + faces.size());
+      if (faces.size() > 0) {
+        //crop image
+        Face face = faces.get(0);
+        Rect bounds = face.getBoundingBox();
+        Bitmap croppedImage = Bitmap.createBitmap(inputImage.getBitmapInternal(), bounds.left, bounds.top, bounds.width(), bounds.height());
+        faceMap.put(name, croppedImage);
+        Log.d(NAME, "faceMap size : " + faceMap.size());
+        if (faceMap.size() == 2) {
+          Log.d(NAME, "Inside result calculator");
+          Interpreter interpreter = getInterpreter();
+          resultsCalculator(interpreter, faceMap, promise);
+        }
+      } else {
+        Log.e(NAME, "Exception occurred, no face found in one image");
         promise.resolve(false);
       }
+    } catch(Exception e) {
+      faceMap.clear();
+      Log.e(NAME, "Exception occurred - ", e);
+      promise.resolve(false);
+    }
   }
 
   private void resultsCalculator(Interpreter interpreter, Map<String, Bitmap> faceMap, Promise promise) throws IOException {
