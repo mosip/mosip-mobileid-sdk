@@ -38,7 +38,11 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
           matcher = FaceMatchProperties(threshold = matcherConfig.getDouble("threshold"))
         )
     }
-    BiometricSdkFactory.configure(config = configBuilder.build())
+    try {
+      BiometricSdkFactory.configure(config = configBuilder.build())
+    } catch (ex: Exception) {
+      promise.reject(ex)
+    }
     promise.resolve(null)
   }
 
@@ -47,9 +51,7 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
     val instance = BiometricSdkFactory.getInstance()
     val imageData = Base64.decode(b64Img, Base64.DEFAULT)
     val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
-    val image = instance.io().convert(bitmap)
-    val template = instance.face().encoder()
-      .extractAndEncode(image)
+    val template = instance.face().encoder().extractAndEncode(bitmap)
     val templateStr = Base64.encodeToString(template, Base64.DEFAULT)
     promise.resolve(templateStr)
   }

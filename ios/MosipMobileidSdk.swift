@@ -30,7 +30,11 @@ class MosipMobileidSdk: NSObject {
                                                            ),
                               matcher: FaceMatchProperties(threshold: faceMatcherThreshold))
             }
-            BiometricSdkFactory.shared.configure(config: builder.build())
+            do {
+                try BiometricSdkFactory.shared.configure(config: builder.build())
+            } catch {
+                reject("BIOMETRIC_SDK_CONFIGURATION_ERROR", error.localizedDescription, error)
+            }
             resolve(nil)
         }
 
@@ -41,9 +45,8 @@ class MosipMobileidSdk: NSObject {
             let instance = BiometricSdkFactory.shared.getInstance()
             let imageData = Data(base64Encoded: b64Img as String)!
             let img = UIImage(data: imageData)!
-            let cgImagePtr = UnsafeMutableRawPointer( Unmanaged.passRetained(img.cgImage!).toOpaque())
-            let image = instance.io().convert(image: cgImagePtr)
-            let template = instance.face().encoder().extractAndEncode(sample: image)
+            let cgImagePtr = UnsafeMutableRawPointer(Unmanaged.passRetained(img.cgImage!).toOpaque())
+            let template = instance.face().encoder().extractAndEncode(nativeImage: cgImagePtr)
             let templateStr =   template.base64EncodedString() as NSString
             resolve(templateStr)
         }

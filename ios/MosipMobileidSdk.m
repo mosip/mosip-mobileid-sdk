@@ -18,6 +18,11 @@ RCT_EXTERN_METHOD(faceCompare:
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject);
 
+RCT_EXTERN_METHOD(resize:
+                  (NSString*)b64Img
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject);
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

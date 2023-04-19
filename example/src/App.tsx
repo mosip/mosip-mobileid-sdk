@@ -35,15 +35,16 @@ export default function App() {
   };
 
   const compareImages = async () => {
+    if (image1 === undefined || image2 === undefined) {
+      return;
+    }
+    /*const resized = await resize(image1?.data)
+    setImage2({path: `data:image/png;base64,${resized}`, data: ''})*/
     var resp = await init(
       'https://drive.google.com/u/0/uc?id=1Krd2U6DQsqhXpZn7QgDv-Hx4aAwP-QOa&export=download'
     );
     console.log('=================> received response');
     console.log(resp);
-
-    if (image1 === undefined || image2 === undefined) {
-      return;
-    }
     // const template1 = await faceExtractAndEncode(image1.data);
     // const template2 = await faceExtractAndEncode(image2.data);
     const result = await faceAuth(image1.data, image2.data);
