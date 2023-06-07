@@ -23,7 +23,8 @@ export async function init(url: string): Promise<boolean> {
       encoder: {
         faceNetModel: {
           tfliteModelPath: url,
-          tfliteModelChecksum: -1,
+          // linux command to get crc32 decimal checksum: $((16#$(crc32 facenet.tflite)))
+          tfliteModelChecksum: 1638330780,
           inputWidth: 160,
           inputHeight: 160,
           outputLength: 128,
@@ -35,6 +36,7 @@ export async function init(url: string): Promise<boolean> {
     },
   };
   try {
+    console.log(`init with: ${JSON.stringify(config)}`)
     await MosipMobileidSdk.configure(config);
     return true;
   } catch (e) {

@@ -3,10 +3,23 @@ import * as React from 'react';
 
 import { Alert, Button, Image, Platform, StyleSheet, View } from 'react-native';
 import RNFS from 'react-native-fs';
+import {useEffect} from "react";
 
 export default function App() {
   const [image1, setImage1] = React.useState<{ path: string; data: string }>();
   const [image2, setImage2] = React.useState<{ path: string; data: string }>();
+
+  // load async
+  useEffect( ()  => {
+    init(
+      'https://drive.google.com/u/0/uc?id=1Krd2U6DQsqhXpZn7QgDv-Hx4aAwP-QOa&export=download'
+    )
+      .catch(e => console.log(`Error: ${e}`))
+      .then(res => {
+        console.log(`========> sdk ready to use?: ${res}`);
+      });
+
+  }, []);
 
   const loadImage = async (
     index: number
@@ -28,8 +41,8 @@ export default function App() {
     }
   };
   const loadRandomImages = async () => {
-    const image1Dat = await loadImage(Math.floor(Math.random() * 3) + 1);
-    const image2Dat = await loadImage(Math.floor(Math.random() * 2) + 1);
+    const image1Dat = await loadImage(Math.floor(Math.random() * 6) + 1);
+    const image2Dat = await loadImage(Math.floor(Math.random() * 6) + 1);
     setImage1(image1Dat);
     setImage2(image2Dat);
   };
@@ -38,15 +51,6 @@ export default function App() {
     if (image1 === undefined || image2 === undefined) {
       return;
     }
-    /*const resized = await resize(image1?.data)
-    setImage2({path: `data:image/png;base64,${resized}`, data: ''})*/
-    var resp = await init(
-      'https://drive.google.com/u/0/uc?id=1Krd2U6DQsqhXpZn7QgDv-Hx4aAwP-QOa&export=download'
-    );
-    console.log('=================> received response');
-    console.log(resp);
-    // const template1 = await faceExtractAndEncode(image1.data);
-    // const template2 = await faceExtractAndEncode(image2.data);
     const result = await faceAuth(image1.data, image2.data);
     let matchResult: string;
     if (result) {
