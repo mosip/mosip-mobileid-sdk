@@ -1,4 +1,4 @@
-import { faceAuth, init } from 'mosip-mobileid-sdk';
+import {faceAuth, init} from 'mosip-mobileid-sdk';
 import * as React from 'react';
 
 import { Alert, Button, Image, Platform, StyleSheet, View } from 'react-native';
@@ -11,9 +11,7 @@ export default function App() {
 
   // load async
   useEffect( ()  => {
-    init(
-      'https://drive.google.com/u/0/uc?id=1Krd2U6DQsqhXpZn7QgDv-Hx4aAwP-QOa&export=download'
-    )
+    init()
       .catch(e => console.log(`Error: ${e}`))
       .then(res => {
         console.log(`========> sdk ready to use?: ${res}`);

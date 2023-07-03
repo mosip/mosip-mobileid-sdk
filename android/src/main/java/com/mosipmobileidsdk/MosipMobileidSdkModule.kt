@@ -3,8 +3,8 @@ package com.mosipmobileidsdk
 import android.graphics.BitmapFactory
 import android.util.Base64
 import com.facebook.react.bridge.*
-import net.iriscan.sdk.BiometricSdkConfigBuilder
 import net.iriscan.sdk.BiometricSdkFactory
+import net.iriscan.sdk.core.io.HashMethod
 import net.iriscan.sdk.face.FaceEncodeProperties
 import net.iriscan.sdk.face.FaceExtractProperties
 import net.iriscan.sdk.face.FaceMatchProperties
@@ -19,27 +19,31 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun configure(config: ReadableMap, promise: Promise) {
-    var configBuilder = BiometricSdkConfigBuilder(reactApplicationContext)
+    var configBuilder = BiometricSdkFactory.configBuilder()
+      .withContext(reactApplicationContext)
     if (config.hasKey("withFace")) {
       val encoderFaceNetConfig = config.getMap("withFace")!!.getMap("encoder")!!.getMap("faceNetModel")!!
       val matcherConfig = config.getMap("withFace")!!.getMap("matcher")!!
+      val modelChecksum = encoderFaceNetConfig.getString("tfliteModelChecksum")
       configBuilder = configBuilder
         .withFace(
           extractor = FaceExtractProperties(),
           encoder = FaceEncodeProperties(
             faceNetModel = FaceNetModelConfiguration(
-              tfliteModelPath = encoderFaceNetConfig.getString("tfliteModelPath")!!,
-              modelChecksum = encoderFaceNetConfig.getInt("tfliteModelChecksum"),
+              path = encoderFaceNetConfig.getString("tfliteModelPath")!!,
               inputHeight = encoderFaceNetConfig.getInt("inputHeight"),
               inputWidth = encoderFaceNetConfig.getInt("inputWidth"),
-              outputLength = encoderFaceNetConfig.getInt("outputLength")
+              outputLength = encoderFaceNetConfig.getInt("outputLength"),
+              modelChecksum = modelChecksum,
+              modelChecksumMethod = if (modelChecksum != null) HashMethod.SHA256 else null,
+              overrideCacheOnWrongChecksum = true
             )
           ),
           matcher = FaceMatchProperties(threshold = matcherConfig.getDouble("threshold"))
         )
     }
     try {
-      BiometricSdkFactory.configure(config = configBuilder.build())
+      BiometricSdkFactory.initialize(config = configBuilder.build())
     } catch (ex: Exception) {
       promise.reject(ex)
     }
@@ -52,8 +56,12 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
     val imageData = Base64.decode(b64Img, Base64.DEFAULT)
     val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
     val template = instance.face().encoder().extractAndEncode(bitmap)
-    val templateStr = Base64.encodeToString(template, Base64.DEFAULT)
-    promise.resolve(templateStr)
+    if (template != null) {
+      val templateStr = Base64.encodeToString(template, Base64.DEFAULT)
+      promise.resolve(templateStr)
+    } else {
+      promise.reject("FACE_EXTRACT_ERROR", "No biometrics were found on image")
+    }
   }
 
   @ReactMethod

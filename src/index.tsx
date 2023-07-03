@@ -17,21 +17,21 @@ const MosipMobileidSdk = NativeModules.MosipMobileidSdk
       }
     );
 
-export async function init(url: string): Promise<boolean> {
+export async function init(): Promise<boolean> {
   const config = {
     withFace: {
       encoder: {
         faceNetModel: {
-          tfliteModelPath: url,
-          // linux command to get crc32 decimal checksum: $((16#$(crc32 facenet.tflite)))
-          tfliteModelChecksum: 1638330780,
+          path: "https://api.dev.mosip.net/inji/model.tflite",
           inputWidth: 160,
           inputHeight: 160,
-          outputLength: 128,
+          outputLength: 512,
+          // optional
+          modelChecksum: "797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06",
         },
       },
       matcher: {
-        threshold: 10.0,
+        threshold: 1.0,
       },
     },
   };
