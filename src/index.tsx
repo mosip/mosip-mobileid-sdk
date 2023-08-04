@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import {NativeModules, Platform} from 'react-native';
 
 const LINKING_ERROR =
   `The package 'mosip-mobileid-sdk' doesn't seem to be linked. Make sure: \n\n` +
@@ -17,12 +17,12 @@ const MosipMobileidSdk = NativeModules.MosipMobileidSdk
       }
     );
 
-export async function init(): Promise<boolean> {
+export async function init(path: string): Promise<boolean> {
   const config = {
     withFace: {
       encoder: {
         faceNetModel: {
-          path: "https://api.dev.mosip.net/inji/model.tflite",
+          path: path,
           inputWidth: 160,
           inputHeight: 160,
           outputLength: 512,
@@ -52,5 +52,16 @@ export async function faceAuth(capturedImage: string, vcImage: string): Promise<
   } catch (e) {
     console.error('faceAuth auth failed', e);
     return false;
+  }
+}
+
+export async function faceScore(capturedImage: string, vcImage: string): Promise<number> {
+  try {
+    const template1 = await MosipMobileidSdk.faceExtractAndEncode(capturedImage);
+    const template2 = await MosipMobileidSdk.faceExtractAndEncode(vcImage);
+    return await MosipMobileidSdk.faceScore(template1, template2);
+  } catch (e) {
+    console.error('faceScore auth failed', e);
+    return -1.0;
   }
 }

@@ -44,7 +44,7 @@ class MosipMobileidSdk: NSObject {
     func faceExtractAndEncode(_ b64Img: NSString,
                               resolve:  @escaping RCTPromiseResolveBlock,
                               reject: @escaping RCTPromiseRejectBlock) -> Void {
-        let instance = BiometricSdkFactory.shared.getInstance()
+        let instance = BiometricSdkFactory.shared.getInstance()!
         let imageData = Data(base64Encoded: b64Img as String)!
         let img = UIImage(data: imageData)!
         let cgImagePtr = UnsafeMutableRawPointer(Unmanaged.passRetained(img.cgImage!).toOpaque())
@@ -62,9 +62,21 @@ class MosipMobileidSdk: NSObject {
                      b64Template2: NSString,
                      resolve:  @escaping RCTPromiseResolveBlock,
                      reject: @escaping RCTPromiseRejectBlock) -> Void {
-        let instance = BiometricSdkFactory.shared.getInstance()
+        let instance = BiometricSdkFactory.shared.getInstance()!
         let sample1 = Data(base64Encoded: b64Template1 as String)!
         let sample2 = Data(base64Encoded: b64Template2 as String)!
         resolve(instance.face().matcher().matches(sample1: sample1, sample2: sample2))
     }
+    
+    @objc
+    func faceScore(_ b64Template1: NSString,
+                   b64Template2: NSString,
+                   resolve:  @escaping RCTPromiseResolveBlock,
+                   reject: @escaping RCTPromiseRejectBlock) -> Void {
+      let instance = BiometricSdkFactory.shared.getInstance()!
+      let sample1 = Data(base64Encoded: b64Template1 as String)!
+      let sample2 = Data(base64Encoded: b64Template2 as String)!
+      resolve(instance.face().matcher().matchScore(sample1: sample1, sample2: sample2))
+  }
+    
 }

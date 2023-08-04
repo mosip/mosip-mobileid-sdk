@@ -18,8 +18,9 @@ RCT_EXTERN_METHOD(faceCompare:
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject);
 
-RCT_EXTERN_METHOD(resize:
-                  (NSString*)b64Img
+RCT_EXTERN_METHOD(faceScore:
+                  (NSString*)b64Template1
+                  b64Template2:(NSString*)b64Template2
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject);
 

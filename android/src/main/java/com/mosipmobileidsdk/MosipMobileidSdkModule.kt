@@ -24,13 +24,13 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
     if (config.hasKey("withFace")) {
       val encoderFaceNetConfig = config.getMap("withFace")!!.getMap("encoder")!!.getMap("faceNetModel")!!
       val matcherConfig = config.getMap("withFace")!!.getMap("matcher")!!
-      val modelChecksum = encoderFaceNetConfig.getString("tfliteModelChecksum")
+      val modelChecksum = encoderFaceNetConfig.getString("modelChecksum")
       configBuilder = configBuilder
         .withFace(
           extractor = FaceExtractProperties(),
           encoder = FaceEncodeProperties(
             faceNetModel = FaceNetModelConfiguration(
-              path = encoderFaceNetConfig.getString("tfliteModelPath")!!,
+              path = encoderFaceNetConfig.getString("path")!!,
               inputHeight = encoderFaceNetConfig.getInt("inputHeight"),
               inputWidth = encoderFaceNetConfig.getInt("inputWidth"),
               outputLength = encoderFaceNetConfig.getInt("outputLength"),
@@ -52,7 +52,7 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun faceExtractAndEncode(b64Img: String, promise: Promise) {
-    val instance = BiometricSdkFactory.getInstance()
+    val instance = BiometricSdkFactory.getInstance()!!
     val imageData = Base64.decode(b64Img, Base64.DEFAULT)
     val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
     val template = instance.face().encoder().extractAndEncode(bitmap)
@@ -66,11 +66,20 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun faceCompare(b64Template1: String, b64Template2: String, promise: Promise) {
-    val instance = BiometricSdkFactory.getInstance()
+    val instance = BiometricSdkFactory.getInstance()!!
     val template1 = Base64.decode(b64Template1, Base64.DEFAULT)
     val template2 = Base64.decode(b64Template2, Base64.DEFAULT)
     val match = instance.face().matcher().matches(template1, template2)
     promise.resolve(match)
+  }
+
+  @ReactMethod
+  fun faceScore(b64Template1: String, b64Template2: String, promise: Promise) {
+    val instance = BiometricSdkFactory.getInstance()!!
+    val template1 = Base64.decode(b64Template1, Base64.DEFAULT)
+    val template2 = Base64.decode(b64Template2, Base64.DEFAULT)
+    val score = instance.face().matcher().matchScore(template1, template2)
+    promise.resolve(score)
   }
 
   companion object {
