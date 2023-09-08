@@ -1,7 +1,7 @@
 import {faceAuth, faceScore, init} from 'mosip-mobileid-sdk';
 import * as React from 'react';
 import {useEffect, useRef} from 'react';
-import {Camera} from 'expo-camera';
+import {Camera, ImageType} from 'expo-camera';
 
 
 import {Button, Image, Platform, ScrollView, StyleSheet, Text, View} from 'react-native';
@@ -84,11 +84,11 @@ export default function App() {
   };
 
   const takeImg1 = async () => {
-    const data = await camera1.current?.takePictureAsync({base64: true});
+    const data = await camera1.current?.takePictureAsync({base64: true, imageType: ImageType.png, /*skipProcessing: true*/});
     if (data?.base64) {
       setImage1({
         data: data.base64,
-        path: `data:image/jpg;base64,${data.base64}`
+        path: `data:image/png;base64,${data.base64}`
       });
       setShowCam1(false)
     }
@@ -101,11 +101,11 @@ export default function App() {
     }
   }
   const takeImg2 = async () => {
-    const data = await camera2.current?.takePictureAsync({base64: true});
+    const data = await camera2.current?.takePictureAsync({base64: true, imageType: ImageType.png, /*skipProcessing: true*/});
     if (data?.base64) {
       setImage2({
         data: data.base64,
-        path: `data:image/jpg;base64,${data.base64}`
+        path: `data:image/png;base64,${data.base64}`
       });
       setShowCam2(false)
     }
