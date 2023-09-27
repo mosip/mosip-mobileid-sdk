@@ -1,5 +1,5 @@
 {
-  "name": "MosipInjiFaceSdkExample",
+  "name": "MosipMobileidSdkExample",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -9,6 +9,8 @@
     "pods": "pod-install --quiet"
   },
   "dependencies": {
+    "expo": "^48.0.0",
+    "expo-camera": "~13.2.1",
     "react": "18.2.0",
     "react-native": "0.71.4",
     "react-native-fs": "^2.20.0"

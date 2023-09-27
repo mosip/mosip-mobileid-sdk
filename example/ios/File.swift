@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  MosipInjiFaceSdkExample
+//  MosipMobileidSdkExample
 //
 
 import Foundation

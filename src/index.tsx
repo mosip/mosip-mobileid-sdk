@@ -1,13 +1,13 @@
-import { NativeModules, Platform } from 'react-native';
+import {NativeModules, Platform} from 'react-native';
 
 const LINKING_ERROR =
-  `The package 'mosip-inji-face-sdk' doesn't seem to be linked. Make sure: \n\n` +
+  `The package 'mosip-mobileid-sdk' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const BiometricSdkReactNative = NativeModules.BiometricSdkReactNative
-  ? NativeModules.BiometricSdkReactNative
+const MosipMobileidSdk = NativeModules.MosipMobileidSdk
+  ? NativeModules.MosipMobileidSdk
   : new Proxy(
       {},
       {
@@ -17,44 +17,51 @@ const BiometricSdkReactNative = NativeModules.BiometricSdkReactNative
       }
     );
 
-export async function init(url: string): Promise<boolean> {
+export async function init(path: string): Promise<boolean> {
   const config = {
     withFace: {
       encoder: {
         faceNetModel: {
-          tfliteModelPath: url,
-          tfliteModelChecksum: -1,
+          path: path,
           inputWidth: 160,
           inputHeight: 160,
-          outputLength: 128,
+          outputLength: 512,
+          // optional
+          modelChecksum: "797b4d99794965749635352d55da38d4748c28c659ee1502338badee4614ed06",
         },
       },
       matcher: {
-        threshold: 10.0,
+        threshold: 1.0,
       },
     },
   };
   try {
-    await BiometricSdkReactNative.configure(config);
+    console.log(`init with: ${JSON.stringify(config)}`)
+    await MosipMobileidSdk.configure(config);
     return true;
   } catch (e) {
     console.error('init failed', e);
     return false;
   }
-  
 }
-
-function faceExtractAndEncode(image: string): Promise<string> {
-  return BiometricSdkReactNative.faceExtractAndEncode(image);
-}
-
 export async function faceAuth(capturedImage: string, vcImage: string): Promise<boolean> {
   try {
-    const template1 = await faceExtractAndEncode(capturedImage);
-    const template2 = await faceExtractAndEncode(vcImage);
-    return await BiometricSdkReactNative.faceCompare(template1, template2);
+    const template1 = await MosipMobileidSdk.faceExtractAndEncode(capturedImage);
+    const template2 = await MosipMobileidSdk.faceExtractAndEncode(vcImage);
+    return await MosipMobileidSdk.faceCompare(template1, template2);
   } catch (e) {
     console.error('faceAuth auth failed', e);
     return false;
+  }
+}
+
+export async function faceScore(capturedImage: string, vcImage: string): Promise<number> {
+  try {
+    const template1 = await MosipMobileidSdk.faceExtractAndEncode(capturedImage);
+    const template2 = await MosipMobileidSdk.faceExtractAndEncode(vcImage);
+    return await MosipMobileidSdk.faceScore(template1, template2);
+  } catch (e) {
+    console.error('faceScore auth failed', e);
+    return -1.0;
   }
 }

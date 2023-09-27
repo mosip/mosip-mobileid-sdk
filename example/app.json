@@ -1,4 +1,14 @@
 {
-  "name": "MosipInjiFaceSdkExample",
-  "displayName": "MosipInjiFaceSdkExample"
+  "name": "MosipMobileidSdkExample",
+  "displayName": "MosipMobileidSdkExample",
+  "expo": {
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ]
+    ]
+  }
 }
