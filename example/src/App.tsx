@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     height: 25,
   },
   container: {
+    backgroundColor: "black",
     marginStart: 10,
     marginEnd: 10,
     marginTop: 25,
