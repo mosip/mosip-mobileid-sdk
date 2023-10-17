@@ -31,7 +31,7 @@ export async function init(path: string): Promise<boolean> {
         },
       },
       matcher: {
-        threshold: 1.0,
+        threshold: 0.8,
       },
     },
   };
