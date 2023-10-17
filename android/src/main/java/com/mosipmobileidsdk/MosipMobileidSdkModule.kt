@@ -29,7 +29,7 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
         .withFace(
           extractor = FaceExtractProperties(),
           encoder = FaceEncodeProperties(
-            faceNetModel = FaceNetModelConfiguration(
+            tfModel = FaceNetModelConfiguration(
               path = encoderFaceNetConfig.getString("path")!!,
               inputHeight = encoderFaceNetConfig.getInt("inputHeight"),
               inputWidth = encoderFaceNetConfig.getInt("inputWidth"),

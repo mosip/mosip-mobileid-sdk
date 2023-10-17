@@ -19,7 +19,7 @@ class MosipMobileidSdk: NSObject {
             let faceMatcherThreshold = configuration.value(forKeyPath: "withFace.matcher.threshold") as! Double
             builder = builder
                 .withFace(extractor: FaceExtractProperties(),
-                          encoder: FaceEncodeProperties(faceNetModel:
+                          encoder: FaceEncodeProperties(tfModel:
                                                             FaceNetModelConfiguration(
                                                                 path: faceModelPath,
                                                                 inputWidth:  faceModelinputWidth,
@@ -30,7 +30,9 @@ class MosipMobileidSdk: NSObject {
                                                                 overrideCacheOnWrongChecksum: faceModelChecksum != nil ? true : nil
                                                             )
                                                        ),
-                          matcher: FaceMatchProperties(threshold: faceMatcherThreshold))
+                          matcher: FaceMatchProperties(threshold: faceMatcherThreshold),
+                          liveness: nil
+                )
         }
         do {
             try BiometricSdkFactory.shared.initialize(config: builder.build())
