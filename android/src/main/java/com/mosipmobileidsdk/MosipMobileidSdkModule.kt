@@ -3,6 +3,10 @@ package com.mosipmobileidsdk
 import android.graphics.BitmapFactory
 import android.util.Base64
 import com.facebook.react.bridge.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.iriscan.sdk.BiometricSdkFactory
 import net.iriscan.sdk.core.io.HashMethod
 import net.iriscan.sdk.face.FaceEncodeProperties
@@ -42,12 +46,14 @@ class MosipMobileidSdkModule(reactContext: ReactApplicationContext) :
           matcher = FaceMatchProperties(threshold = matcherConfig.getDouble("threshold"))
         )
     }
-    try {
-      BiometricSdkFactory.initialize(config = configBuilder.build())
-    } catch (ex: Exception) {
-      promise.reject(ex)
+    CoroutineScope(Dispatchers.IO).launch {
+      try {
+        BiometricSdkFactory.initialize(config = configBuilder.build())
+      } catch (ex: Exception) {
+        promise.reject(ex)
+      }
+      promise.resolve(null)
     }
-    promise.resolve(null)
   }
 
   @ReactMethod

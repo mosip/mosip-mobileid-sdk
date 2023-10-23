@@ -3,7 +3,7 @@ import BiometricSdk
 
 @objc(MosipMobileidSdk)
 class MosipMobileidSdk: NSObject {
-    
+
     @objc
     func configure(_ configuration: NSDictionary,
                    resolve:  @escaping RCTPromiseResolveBlock,
@@ -34,14 +34,16 @@ class MosipMobileidSdk: NSObject {
                           liveness: nil
                 )
         }
-        do {
-            try BiometricSdkFactory.shared.initialize(config: builder.build())
-        } catch {
-            reject("CONFIGURATION_ERROR", error.localizedDescription, error)
+        DispatchQueue.global(qos: .default).async {
+            do {
+                try BiometricSdkFactory.shared.initialize(config: builder.build())
+            } catch {
+                reject("CONFIGURATION_ERROR", error.localizedDescription, error)
+            }
+            resolve(nil)
         }
-        resolve(nil)
     }
-    
+
     @objc
     func faceExtractAndEncode(_ b64Img: NSString,
                               resolve:  @escaping RCTPromiseResolveBlock,
@@ -58,7 +60,7 @@ class MosipMobileidSdk: NSObject {
             reject("FACE_EXTRACT_ERROR", "No biometrics were found on image", nil)
         }
     }
-    
+
     @objc
     func faceCompare(_ b64Template1: NSString,
                      b64Template2: NSString,
@@ -69,7 +71,7 @@ class MosipMobileidSdk: NSObject {
         let sample2 = Data(base64Encoded: b64Template2 as String)!
         resolve(instance.face().matcher().matches(sample1: sample1, sample2: sample2))
     }
-    
+
     @objc
     func faceScore(_ b64Template1: NSString,
                    b64Template2: NSString,
@@ -80,5 +82,5 @@ class MosipMobileidSdk: NSObject {
       let sample2 = Data(base64Encoded: b64Template2 as String)!
       resolve(instance.face().matcher().matchScore(sample1: sample1, sample2: sample2))
   }
-    
+
 }
